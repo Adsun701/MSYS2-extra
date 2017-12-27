@@ -1,0 +1,32 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=libxpm
+pkgver=3.5.12
+pkgrel=1
+pkgdesc="X11 pixmap library"
+arch=('i686' 'x86_64')
+license=('custom')
+url="https://xorg.freedesktop.org/"
+depends=('libxt' 'libxext')
+makedepends=('xorg-util-macros')
+source=(${url}/releases/individual/lib/libXpm-${pkgver}.tar.bz2)
+sha256sums=('fd6a6de3da48de8d1bb738ab6be4ad67f7cb0986c39bd3f7d51dd24f7854bdec')
+
+prepare() {
+  cd "${srcdir}/libXpm-${pkgver}"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/libXpm-${pkgver}"
+  ./configure --prefix=/usr --sysconfdir=/etc --enable-shared --enable-static
+  make
+}
+
+package() {
+  cd "${srcdir}/libXpm-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

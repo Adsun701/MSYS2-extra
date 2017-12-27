@@ -1,0 +1,32 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=xineramaproto
+pkgver=1.2.1
+pkgrel=1
+pkgdesc="X11 Xinerama extension wire protocol"
+arch=('any')
+url="https://xorg.freedesktop.org/"
+license=('custom')
+makedepends=('xorg-util-macros')
+source=("${url}/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+        "0001-xineramaproto-1.2.1-fix-build-msys2.patch")
+sha256sums=('977574bb3dc192ecd9c55f59f991ec1dff340be3e31392c95deff423da52485b'
+            'daa2bef5277652bb2e62e9c33834e5f48e0a2e7653b35759857737cd4e6fdd6f')
+
+prepare() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/0001-xineramaproto-1.2.1-fix-build-msys2.patch"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

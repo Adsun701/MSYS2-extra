@@ -1,0 +1,50 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgbase=elfutils
+pkgname=(elfutils libelf)
+pkgver=0.170
+pkgrel=1
+pkgdesc="Utilities to handle ELF object files and DWARF debugging information"
+arch=('i686' 'x86_64')
+url="https://sourceware.org/elfutils/"
+license=('LGPL3' 'GPL' 'GPL3')
+depends=('gcc-libs' 'zlib' 'libbz2' 'liblzma')
+makedepends=('gcc' 'zlib-devel' 'libbz2-devel' 'liblzma-devel')
+options=('staticlibs')
+source=(https://sourceware.org/elfutils/ftp/${pkgver}/elfutils-${pkgver}.tar.bz2)
+sha1sums=('aff6feac0ff69eb7b240babdf2918f640eadb032')
+
+build() {
+  cd ${pkgbase}-${pkgver}
+
+  # fix make check with i686 
+  # https://sourceware.org/bugzilla/show_bug.cgi?id=22083
+  export CFLAGS=${CFLAGS/-fno-plt} # fix make check with i686 
+
+  CFLAGS+=" -g"  # required for test-suite success
+  ./configure --prefix=/usr --program-prefix="eu-" --enable-deterministic-archives
+
+  make
+}
+
+check() {
+  cd ${pkgbase}-${pkgver}
+
+  make check
+}
+
+package_elfutils() {
+  depends=("libelf=$pkgver-$pkgrel")
+
+  cd ${pkgbase}-${pkgver}
+
+  make DESTDIR="${pkgdir}" install
+
+  mkdir "${srcdir}"/libelf
+  mv "${pkgdir}"/usr/{lib,include} "${srcdir}/libelf"
+}
+
+package_libelf() {
+  pkgdesc="Libraries to handle ELF object files and DWARF debugging information"
+  mv libelf "${pkgdir}/usr"
+}

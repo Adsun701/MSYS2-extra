@@ -1,0 +1,31 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=pixman
+pkgver=0.34.0
+pkgrel=1
+pkgdesc="The pixel-manipulation library for X and cairo"
+arch=('i686' 'x86_64')
+url="http://xorg.freedesktop.org"
+license=('custom')
+depends=('msys2-runtime' 'libpng')
+makedepends=('msys2-runtime-devel')
+source=(https://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2)
+sha1sums=('367698744e74d6d4f363041482965b9ea7fbe4a5')
+
+prepare() {
+  cd $pkgname-$pkgver
+  autoreconf -fiv
+}
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr --enable-shared --enable-static
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="${pkgdir}" install
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

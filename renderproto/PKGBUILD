@@ -1,0 +1,31 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=renderproto
+pkgver=0.11.1
+pkgrel=1
+pkgdesc="X11 Render extension wire protocol"
+arch=(any)
+url="https://xorg.freedesktop.org/"
+license=('custom')
+source=("https://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+        "0001-renderproto-0.11.1-fix-build-msys2.patch")
+sha256sums=('06735a5b92b20759204e4751ecd6064a2ad8a6246bb65b3078b862a00def2537'
+          'fb0c35749e2c862f6191d7b53b97c6dcbe092aea6b3a628d71e82d416370d610')
+
+prepare() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  patch -Np1 -i "${srcdir}/0001-renderproto-0.11.1-fix-build-msys2.patch"
+  autoreconf -fiv
+}
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  make DESTDIR=${pkgdir} install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

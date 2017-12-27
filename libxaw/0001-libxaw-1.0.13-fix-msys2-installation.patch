@@ -1,0 +1,11 @@
+--- libXaw-1.0.13/configure-orig.ac	2017-12-25 18:59:34.859389000 -0500
++++ libXaw-1.0.13/configure.ac	2017-12-25 19:00:10.550869200 -0500
+@@ -53,7 +53,7 @@
+ platform_darwin=no
+ LIBEXT=so
+ case $host_os in
+-    cygwin*|mingw*)
++    cygwin*|msys*|mingw*)
+ 	LIBEXT=dll.a
+ 	platform_win32=yes
+ 	;;

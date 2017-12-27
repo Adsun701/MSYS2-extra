@@ -1,0 +1,54 @@
+unchanged:
+--- attr-2.4.48/configure-orig.ac	2017-12-24 17:50:15.488040800 -0500
++++ attr-2.4.48/configure.ac	2017-12-24 17:50:19.458047700 -0500
+@@ -32,7 +32,7 @@
+ AC_FUNC_GCC_VISIBILITY
+ 
+ AM_PROG_AR
+-LT_INIT
++LT_INIT([win32-dll])
+ 
+ AM_GNU_GETTEXT_VERSION([0.18.2])
+ AM_GNU_GETTEXT([external])
+only in patch2:
+unchanged:
+--- attr-2.4.48/libattr/Makemodule-orig.am	2017-09-15 09:47:07.000000000 -0400
++++ attr-2.4.48/libattr/Makemodule.am	2017-12-24 18:20:13.438407100 -0500
+@@ -21,6 +21,9 @@
+ libattr_la_LDFLAGS = \
+ 	-Wl,--version-script,$(top_srcdir)/exports \
+ 	-Wl,$(top_srcdir)/libattr/libattr.lds \
++	-no-undefined \
+ 	-version-info $(LTVERSION)
+ 
++LIBS = -lintl
++
+ EXTRA_DIST += libattr/libattr.lds
+--- attr-2.4.48/man/Makemodule-orig.am	2017-12-24 18:59:24.851601400 -0500
++++ attr-2.4.48/man/Makemodule.am	2017-12-24 18:59:38.657016700 -0500
+@@ -1,25 +1,4 @@
+ include man/man1/Makemodule.am
+ include man/man3/Makemodule.am
+ 
+-# Support installing symlinks for man pages that cover multiple interfaces.
+ install-data-hook:
+-	set -e; \
+-	cd "$(DESTDIR)$(mandir)"; \
+-	for d in $(dist_man_MANS); do \
+-		man_section=$${d##*.}; \
+-		d=$${d#man/}; \
+-		dst=$${d##*/}; \
+-		for m in `$(AWK) \
+-			'/^\.S[h|H] NAME/ {ok=1; next} ok {print; exit}' $$d \
+-			| $(SED) \
+-				-e 's/^\.Nm //' -e 's/,/ /g' -e 's/\\-.*//' \
+-				-e 's/\\\f[0-9]//g' -e 's/  / /g;q'`; \
+-		do \
+-			[ "$$m" = "\\" ] && continue; \
+-			ln="man$$man_section/$$m.$$man_section"; \
+-			[ -e "$$ln" ] && continue; \
+-			echo $(LN_S) $$dst $$ln; \
+-			$(LN_S) $$dst $$ln; \
+-		done; \
+-	done; \
+-	rmdir */ 2>/dev/null || :

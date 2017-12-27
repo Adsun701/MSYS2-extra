@@ -1,0 +1,26 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=perl-json
+pkgver=2.97000
+pkgrel=1
+pkgdesc="JSON (JavaScript Object Notation) encoder/decoder"
+arch=('any')
+url="http://search.cpan.org/dist/JSON"
+license=('GPL' 'PerlArtistic')
+depends=('perl>=5.10.0')
+options=('!emptydirs')
+source=(http://search.cpan.org/CPAN/authors/id/I/IS/ISHIGAKI/JSON-$pkgver.tar.gz)
+sha256sums=('8aada69c2b2fc6b28419f69fdde1f26cb25ea8e55ac9b36e219a3e9dfb673f8c')
+
+build() {
+  cd  "$srcdir"/JSON-$pkgver
+  PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
+  make
+}
+
+package() {
+  cd  "$srcdir"/JSON-$pkgver
+  make install DESTDIR="$pkgdir"
+  find "$pkgdir" -name '.packlist' -delete
+  find "$pkgdir" -name '*.pod' -delete
+}

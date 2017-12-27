@@ -1,0 +1,32 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=recordproto
+pkgver=1.14.2
+pkgrel=1
+pkgdesc="X11 Record extension wire protocol"
+arch=('any')
+url="https://xorg.freedesktop.org/"
+license=('custom')
+makedepends=('xorg-util-macros')
+source=("${url}/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+        "0001-recordproto-1.14.2-fix-build-msys2.patch")
+sha256sums=('a777548d2e92aa259f1528de3c4a36d15e07a4650d0976573a8e2ff5437e7370'
+            '3e4fca912b4286d5a67521ca7f5d7a41565835a7d3523ea2b1a0b4c354e1afc2')
+
+prepare() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  patch -Np1 -i "${srcdir}/0001-recordproto-1.14.2-fix-build-msys2.patch"
+  autoreconf -fiv
+}
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  make DESTDIR=${pkgdir} install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

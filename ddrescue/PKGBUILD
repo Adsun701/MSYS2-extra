@@ -1,0 +1,24 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=ddrescue
+pkgver=1.22
+pkgrel=1
+pkgdesc="GNU data recovery tool"
+arch=('i686' 'x86_64')
+url="http://www.gnu.org/software/ddrescue/ddrescue.html"
+license=('GPL3')
+depends=('gcc-libs')
+source=("http://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.lz")
+md5sums=('49c845ed89d25b534842e40366154cb4')
+
+build() {
+  cd "$srcdir"/$pkgname-$pkgver
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir"/$pkgname-$pkgver
+  make DESTDIR="$pkgdir" install install-man
+  rm "$pkgdir"/usr/share/info/dir
+}

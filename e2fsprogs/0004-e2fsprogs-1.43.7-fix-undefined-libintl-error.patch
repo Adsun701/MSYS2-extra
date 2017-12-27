@@ -1,0 +1,11 @@
+--- e2fsprogs-1.43.7/lib/support/Makefile.in	2017-12-09 17:06:26.673909400 -0500
++++ e2fsprogs-1.43.7/lib/support/Makefile.in	2017-12-09 17:07:09.696622900 -0500
+@@ -37,6 +37,8 @@
+ 		$(srcdir)/quotaio_v2.c \
+ 		$(srcdir)/dict.c
+ 
++LIBS+=-lintl
++
+ LIBRARY= libsupport
+ LIBDIR= support
+ 

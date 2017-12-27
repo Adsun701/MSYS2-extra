@@ -1,0 +1,39 @@
+unchanged:
+--- renderproto-0.11.1/config-orig.sub	2017-12-25 08:44:53.480179800 -0500
++++ renderproto-0.11.1/config.sub	2017-12-25 08:45:05.919310200 -0500
+@@ -1293,7 +1293,7 @@
+ 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+ 	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+ 	      | -chorusos* | -chorusrdb* | -cegcc* \
+-	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
++	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+ 	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+ 	      | -uxpv* | -beos* | -mpeix* | -udk* \
+ 	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+only in patch2:
+unchanged:
+--- renderproto-0.11.1/config-orig.guess	2017-12-25 08:45:20.845076500 -0500
++++ renderproto-0.11.1/config.guess	2017-12-25 08:46:22.980295600 -0500
+@@ -800,6 +800,9 @@
+     i*:CYGWIN*:*)
+ 	echo ${UNAME_MACHINE}-pc-cygwin
+ 	exit ;;
++    i*:MSYS*:*)
++	echo ${UNAME_MACHINE}-pc-msys
++	exit ;;
+     *:MINGW*:*)
+ 	echo ${UNAME_MACHINE}-pc-mingw32
+ 	exit ;;
+@@ -843,6 +846,12 @@
+     p*:CYGWIN*:*)
+ 	echo powerpcle-unknown-cygwin
+ 	exit ;;
++    amd64:MSYS*:*:* | x86_64:MSYS*:*:*)
++	echo x86_64-unknown-msys
++	exit ;;
++    p*:MSYS*:*)
++	echo powerpcle-unknown-msys
++	exit ;;
+     prep*:SunOS:5.*:*)
+ 	echo powerpcle-unknown-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+ 	exit ;;

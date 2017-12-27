@@ -1,0 +1,39 @@
+unchanged:
+--- xineramaproto-1.2.1/config-orig.sub	2017-12-25 10:48:49.811390400 -0500
++++ xineramaproto-1.2.1/config.sub	2017-12-25 10:48:58.775378500 -0500
+@@ -1315,7 +1315,7 @@
+ 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+ 	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+ 	      | -chorusos* | -chorusrdb* | -cegcc* \
+-	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
++	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+ 	      | -mingw32* | -linux-gnu* | -linux-android* \
+ 	      | -linux-newlib* | -linux-uclibc* \
+ 	      | -uxpv* | -beos* | -mpeix* | -udk* \
+only in patch2:
+unchanged:
+--- xineramaproto-1.2.1/config-orig.guess	2017-12-25 10:49:27.198049200 -0500
++++ xineramaproto-1.2.1/config.guess	2017-12-25 10:50:14.781802700 -0500
+@@ -801,6 +801,9 @@
+     i*:CYGWIN*:*)
+ 	echo ${UNAME_MACHINE}-pc-cygwin
+ 	exit ;;
++    i*:MSYS*:*)
++	echo ${UNAME_MACHINE}-pc-msys
++	exit ;;
+     *:MINGW*:*)
+ 	echo ${UNAME_MACHINE}-pc-mingw32
+ 	exit ;;
+@@ -844,6 +847,12 @@
+     p*:CYGWIN*:*)
+ 	echo powerpcle-unknown-cygwin
+ 	exit ;;
++    amd64:MSYS*:*:* | x86_64:MSYS*:*:*)
++	echo x86_64-unknown-msys
++	exit ;;
++    p*:MSYS*:*)
++	echo powerpcle-unknown-msys
++	exit ;;
+     prep*:SunOS:5.*:*)
+ 	echo powerpcle-unknown-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+ 	exit ;;

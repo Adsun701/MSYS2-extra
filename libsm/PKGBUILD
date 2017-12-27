@@ -1,0 +1,31 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=libsm
+pkgver=1.2.2
+pkgrel=1
+pkgdesc="X11 Session Management library"
+arch=('i686' 'x86_64')
+license=('custom')
+url="https://xorg.freedesktop.org/"
+depends=('libice' 'util-linux' 'libutil-linux')
+makedepends=('xorg-util-macros' 'libutil-linux-devel' 'xtrans')
+source=(${url}/releases/individual/lib/libSM-${pkgver}.tar.bz2)
+sha256sums=('0baca8c9f5d934450a70896c4ad38d06475521255ca63b717a6510fdb6e287bd')
+
+prepare() {
+  cd libSM-${pkgver}
+  autoreconf -fiv
+}
+
+build() {
+  cd libSM-${pkgver}
+  ./configure --prefix=/usr --enable-shared --enable-static --sysconfdir=/etc
+  make
+}
+
+package() {
+  cd libSM-${pkgver}
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

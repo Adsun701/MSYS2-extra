@@ -1,0 +1,29 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=unixodbc
+pkgver=2.3.4
+pkgrel=1
+pkgdesc="ODBC is an open specification for providing application developers with a predictable API with which to access Data Sources"
+arch=('i686' 'x86_64')
+license=('GPL2' 'LGPL2.1')
+url="http://www.unixodbc.org/"
+depends=('libreadline' 'libtool' 'libltdl' 'libiconv')
+makedepends=('libreadline-devel' 'libiconv-devel')
+source=(ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-${pkgver}.tar.gz)
+sha256sums=('2e1509a96bb18d248bf08ead0d74804957304ff7c6f8b2e5965309c632421e39')
+
+build() {
+    cd unixODBC-${pkgver}
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make
+}
+
+check() {
+    cd unixODBC-${pkgver}
+    make -k check
+}
+
+package() {
+    cd unixODBC-${pkgver}
+    make DESTDIR=${pkgdir} install
+}

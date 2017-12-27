@@ -1,0 +1,11 @@
+--- e2fsprogs-1.42.6/lib/ext2fs/getsize.c	2012-07-06 08:37:27.000000000 -0500
++++ e2fsprogs-1.42.6/lib/ext2fs/getsize.c	2012-11-04 15:39:13.346438800 -0600
+@@ -62,7 +62,7 @@
+ #include "ext2_fs.h"
+ #include "ext2fs.h"
+ 
+-#if defined(__CYGWIN__) || defined (WIN32)
++#if defined (WIN32)
+ #include "windows.h"
+ #include "winioctl.h"
+ 

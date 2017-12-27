@@ -1,0 +1,32 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=libxtst
+pkgver=1.2.3
+pkgrel=1
+pkgdesc="X11 Testing -- Resource extension library"
+arch=('i686' 'x86_64')
+url="https://xorg.freedesktop.org/"
+license=('custom')
+depends=('libxext' 'libxi' 'recordproto' 'inputproto' 'libxfixes')
+makedepends=('xorg-util-macros')
+source=(${url}/releases/individual/lib/libXtst-${pkgver}.tar.bz2)
+sha256sums=('4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204')
+
+prepare() {
+  cd "${srcdir}/libXtst-${pkgver}"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/libXtst-${pkgver}"
+  ./configure --prefix=/usr --enable-shared --enable-static
+  make
+}
+
+package() {
+  cd "${srcdir}/libXtst-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

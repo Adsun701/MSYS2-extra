@@ -1,0 +1,11 @@
+--- libpaper-1.1.24+nmu5/lib/Makefile-orig.am	2017-12-25 22:52:14.911948300 -0500
++++ libpaper-1.1.24+nmu5/lib/Makefile.am	2017-12-25 22:52:27.957020000 -0500
+@@ -1,7 +1,7 @@
+ 
+ lib_LTLIBRARIES = libpaper.la
+ libpaper_la_SOURCES = dimen.c paper.c dimen.h paperspecs.h
+-libpaper_la_LDFLAGS = -version-info 2:2:1
++libpaper_la_LDFLAGS = -no-undefined -version-info 2:2:1
+ libpaper_la_CPPFLAGS = -D_REENTRANT
+ 
+ BUILT_SOURCES = paperspecs.h

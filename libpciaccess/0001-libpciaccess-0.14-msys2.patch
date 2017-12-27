@@ -1,0 +1,38 @@
+unchanged:
+--- libpciaccess-0.14/configure-orig.ac	2017-12-23 11:19:41.781046200 -0500
++++ libpciaccess-0.14/configure.ac	2017-12-23 11:20:41.369536400 -0500
+@@ -103,6 +103,10 @@
+ 		cygwin=yes
+ 		PCIACCESS_LIBS="$PCIACCESS_LIBS"
+ 		;;
++	*msys*)
++		msys=yes
++		PCIACCESS_LIBS="$PCIACCESS_LIBS"
++		;;
+ esac
+ 
+ AM_CONDITIONAL(LINUX, [test "x$linux" = xyes])
+@@ -112,6 +116,7 @@
+ AM_CONDITIONAL(SOLARIS, [test "x$solaris" = xyes])
+ AM_CONDITIONAL(GNU, [test "x$gnu" = xyes])
+ AM_CONDITIONAL(CYGWIN, [test "x$cygwin" = xyes])
++AM_CONDITIONAL(MSYS, [test "x$msys" = xyes])
+ 
+ AC_SYS_LARGEFILE
+ 
+only in patch2:
+unchanged:
+--- libpciaccess-0.14/src/Makefile-orig.am	2017-12-23 11:16:54.390640700 -0500
++++ libpciaccess-0.14/src/Makefile.am	2017-12-23 11:17:56.782097700 -0500
+@@ -61,6 +61,11 @@
+ VGA_ARBITER = common_vgaarb_stub.c
+ endif
+ 
++if MSYS
++OS_SUPPORT = x86_pci.c
++VGA_ARBITER = common_vgaarb_stub.c
++endif
++
+ libpciaccess_la_SOURCES = common_bridge.c \
+ 	common_iterator.c \
+ 	common_init.c \

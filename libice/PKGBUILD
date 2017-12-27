@@ -1,0 +1,31 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=libice
+pkgver=1.0.9
+pkgrel=1
+pkgdesc="X11 Inter-Client Exchange library"
+arch=('i686' 'x86_64')
+url="https://xorg.freedesktop.org/"
+depends=('msys2-runtime' 'xproto>=7.0.18')
+makedepends=('msys2-runtime-devel' 'xtrans>=1.2.5' 'xorg-util-macros')
+source=(${url}/releases/individual/lib/libICE-${pkgver}.tar.bz2)
+license=('custom')
+sha256sums=('8f7032f2c1c64352b5423f6b48a8ebdc339cc63064af34d66a6c9aa79759e202')
+
+prepare() {
+  cd libICE-${pkgver}
+  autoreconf -fiv
+}
+
+build() {
+  cd libICE-${pkgver}
+  ./configure --prefix=/usr --enable-shared --enable-static --sysconfdir=/etc
+  make
+}
+
+package() {
+  cd libICE-${pkgver}
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

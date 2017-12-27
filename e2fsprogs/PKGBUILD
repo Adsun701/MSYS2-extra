@@ -1,0 +1,65 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=e2fsprogs
+pkgver=1.43.7
+pkgrel=1
+pkgdesc="Ext2/3/4 filesystem utilities"
+arch=('i686' 'x86_64')
+license=('GPL' 'LGPL' 'MIT')
+url="http://e2fsprogs.sourceforge.net"
+groups=('base')
+depends=('sh' 'libutil-linux' 'libiconv' 'libintl')
+makedepends=('bc' 'util-linux' 'libutil-linux-devel' 'libiconv-devel' 'gettext-devel')
+options=('staticlibs')
+source=("https://www.kernel.org/pub/linux/kernel/people/tytso/${pkgname}/v${pkgver}/${pkgname}-${pkgver}.tar.xz"
+        "0001-e2fsprogs-1.41.6-shared-libs.patch"
+        "0002-e2fsprogs-1.42.6-cygwin-getsize.patch"
+        "0003-e2fsprogs-1.40.4-sb_feature_check_ignore.patch"
+        'MIT-LICENSE')
+sha256sums=('2a6367289047d68d9ba6a46cf89ab9a1efd0556cde02a51ebaf414ff51edded9'
+            'c148fc6b2878b0c3adf503d0aaee13934a4fa839232b69e694d222d5e575b2f2'
+            '75b096b4cfca0d3535e081e9b9b6d7ab1033316add13df006e5522944367ee72'
+            '52663bff4b2327ded3f236ec8385ab120f67a2799d869ff0c82596e5e024bb66'
+            'cc45386c1d71f438ad648fd7971e49e3074ad9dbacf9dd3a5b4cb61fd294ecbb')
+
+
+prepare() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/0001-e2fsprogs-1.41.6-shared-libs.patch"
+  patch -Np1 -i "${srcdir}/0002-e2fsprogs-1.42.6-cygwin-getsize.patch"
+  patch -Np1 -i "${srcdir}/0003-e2fsprogs-1.40.4-sb_feature_check_ignore.patch"
+
+  # Remove unnecessary init.d directory
+  sed -i '/init\.d/s|^|#|' misc/Makefile.in
+  
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  
+  LIBS+=-lintl ./configure --prefix=/usr --libdir=/usr/lib \
+      --sbindir=/usr/bin --disable-bsd-shlibs --disable-profile \
+      --disable-elf-shlibs --disable-fsck --disable-uuidd --disable-e2initrd-helper \
+      --disable-jbd-debug --disable-blkid-debug --disable-testio-debug \
+      --disable-libuuid --disable-libblkid --with-libiconv-prefix=/usr --with-libintl-prefix=/usr
+
+  make
+}
+
+package() {
+  unset MAKEFLAGS
+
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install install-libs
+
+  sed -i -e 's/^AWK=.*/AWK=awk/' "${pkgdir}/usr/bin/compile_et"
+
+  # remove references to build directory
+  sed -i -e 's#^SS_DIR=.*#SS_DIR="/usr/share/ss"#' "${pkgdir}/usr/bin/mk_cmds"
+  sed -i -e 's#^ET_DIR=.*#ET_DIR="/usr/share/et"#' "${pkgdir}/usr/bin/compile_et"
+
+  # install MIT license
+  install -Dm644 "${srcdir}/MIT-LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/MIT-LICENSE"
+}

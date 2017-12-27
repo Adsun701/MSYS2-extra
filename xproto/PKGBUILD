@@ -1,0 +1,34 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=xproto
+pkgver=7.0.31
+pkgrel=1
+pkgdesc="X11 core wire protocol and auxiliary headers"
+arch=(any)
+license=('custom')
+groups=('development')
+url="https://xorg.freedesktop.org/"
+makedepends=('util-macros')
+source=("${url}/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+        "0001-xproto-7.0.31-msys2.patch")
+sha256sums=('c6f9747da0bd3a95f86b17fb8dd5e717c8f3ab7f0ece3ba1b247899ec1ef7747'
+            '083a41d6706fc08e284af456b4e1de64531bc5a9156d6f254ba47b00058cfea9')
+
+prepare() {
+  cd ${pkgname}-${pkgver}
+  patch -Np1 -i "${srcdir}/0001-xproto-7.0.31-msys2.patch"
+  autoreconf -fiv
+}
+
+build() {
+  cd ${pkgname}-${pkgver}
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd ${pkgname}-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

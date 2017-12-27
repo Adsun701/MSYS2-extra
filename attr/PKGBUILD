@@ -1,0 +1,35 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=attr
+pkgver=2.4.48
+pkgrel=1
+pkgdesc="Extended attribute support library for ACL support"
+arch=('i686' 'x86_64')
+url="http://savannah.nongnu.org/projects/attr"
+license=('LGPL')
+depends=('msys2-runtime' 'gettext' 'libintl')
+makedepends=('gettext-devel' 'msys2-runtime-devel')
+replaces=('xfsattr')
+provides=('xfsattr')
+conflicts=('xfsattr')
+source=("http://git.savannah.nongnu.org/cgit/attr.git/snapshot/${pkgname}-${pkgver}.tar.gz"
+        "0001-attr-2.4.48-fix-build.patch")
+sha256sums=('095699f71230ace37e5bc680c6f9d15cf8e53eb38d00b2c46db5cc7e0712e5f3'
+            '561cd27eb262e38b0c09675af565edd03fc4229f3cd9728c963d811175321439')
+
+prepare() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  patch -Np1 -i "${srcdir}/0001-attr-2.4.48-fix-build.patch"
+  ./autogen.sh
+}
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  ./configure --prefix=/usr --enable-shared --enable-static
+  make
+}
+
+package() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  make DESTDIR="${pkgdir}" DIST_ROOT="${pkgdir}" install
+}

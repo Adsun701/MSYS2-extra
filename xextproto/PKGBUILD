@@ -1,0 +1,32 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=xextproto
+pkgver=7.3.0
+pkgrel=1
+pkgdesc="X11 various extension wire protocol"
+arch=('any')
+license=('custom')
+makedepends=('xmlto' 'xorg-util-macros' 'docbook-xsl')
+url="https://xorg.freedesktop.org/"
+source=("${url}/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+        "0001-xextproto-7.3.0-msys2.patch")
+sha256sums=('f3f4b23ac8db9c3a9e0d8edb591713f3d70ef9c3b175970dd8823dfc92aa5bb0'
+            '9d52c1e3d5640e37963749fbdd1953fa2ccb4e269321579ba6a8e027208b796a')
+
+prepare() {
+  cd ${pkgname}-${pkgver}
+  patch -Np1 -i "${srcdir}/0001-xextproto-7.3.0-msys2.patch"
+  autoreconf -fiv
+}
+
+build() {
+  cd ${pkgname}-${pkgver}
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd ${pkgname}-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}
