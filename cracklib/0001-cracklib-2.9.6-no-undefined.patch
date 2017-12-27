@@ -1,0 +1,11 @@
+--- cracklib-2.9.6/lib/Makefile-orig.am	2017-12-27 13:03:51.405624700 -0500
++++ cracklib-2.9.6/lib/Makefile.am	2017-12-27 13:03:55.686911100 -0500
+@@ -14,7 +14,7 @@
+ # For next ABI changing release, use 3:0:0
+ # After that, follow the libtool recommended incrementing procedure
+ #
+-libcrack_la_LDFLAGS = -version-info 11:0:9
++libcrack_la_LDFLAGS = -no-undefined -version-info 11:0:9
+ 
+ # Link in NLS libs. Needed by FreeBSD build
+ libcrack_la_LIBADD = $(LTLIBINTL)
