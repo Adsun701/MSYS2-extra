@@ -1,0 +1,8 @@
+--- libdaemon/libdaemon/Makefile.am.orig	2018-05-15 19:07:24.336606800 -0400
++++ libdaemon/libdaemon/Makefile.am	2018-05-15 19:07:36.651141200 -0400
+@@ -39,4 +39,4 @@
+ 	daemon.h \
+ 	$(pkg_include_HEADERS)
+ 
+-libdaemon_la_LDFLAGS = -version-info $(LIBDAEMON_VERSION_INFO) $(LDFLAGS_NOUNDEFINED)
++libdaemon_la_LDFLAGS = -version-info $(LIBDAEMON_VERSION_INFO) $(LDFLAGS_NOUNDEFINED) -no-undefined

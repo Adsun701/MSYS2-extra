@@ -1,0 +1,9 @@
+--- libnet-1.1.6/src/Makefile.am.orig	2018-05-15 17:51:18.009214300 -0400
++++ libnet-1.1.6/src/Makefile.am	2018-05-15 17:51:29.165639200 -0400
+@@ -82,5 +82,5 @@
+ # 1.1.5 is 7:0:6 -> new APIs, backwards compat
+ # 1.1.6 is 8:0:7 -> new APIs, backwards compat
+ 
+-libnet_la_LDFLAGS = -version-info 8:0:7 -Wl
++libnet_la_LDFLAGS = -version-info 8:0:7 -Wl -no-undefined
+ 
