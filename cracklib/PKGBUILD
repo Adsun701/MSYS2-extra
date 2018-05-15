@@ -1,6 +1,6 @@
 # Maintainer: Andrew Sun <adsun701@gmail.com>
 
-pkgname=cracklib
+pkgname=('cracklib' 'cracklib-devel')
 pkgver=2.9.6
 pkgrel=1
 pkgdesc="Password Checking Library"
@@ -9,29 +9,42 @@ license=('GPL')
 url="https://github.com/cracklib/cracklib"
 depends=('msys2-runtime' 'zlib')
 makedepends=('msys2-runtime-devel' 'zlib-devel')
-source=("https://github.com/cracklib/cracklib/releases/download/$pkgname-$pkgver/$pkgname-$pkgver.tar.gz"
+source=("https://github.com/cracklib/cracklib/releases/download/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.gz"
         "0001-cracklib-2.9.6-no-undefined.patch")
 sha256sums=('17cf76943de272fd579ed831a1fd85339b393f8d00bf9e0d17c91e972f583343'
             'aa01be6097a6fed7f108db7de6e6b6b6b217c472b25921771037d93e3cafa87a')
 
 prepare() {
-  cd $srcdir/$pkgname-$pkgver
+  cd "${srcdir}/${pkgname}-${pkgver}"
   patch -Np1 -i "${srcdir}/0001-cracklib-2.9.6-no-undefined.patch"
   autoreconf -fiv
 }
 
 build() {
-  cd $srcdir/$pkgname-$pkgver
+  cd "${srcdir}/${pkgname}-${pkgver}"
   ./configure --prefix=/usr --sbindir=/usr/bin --without-python
-  make 
+  make
+  make install DESTDIR="${srcdir}/dest"
 }
 
 check() {
-  cd $srcdir/$pkgname-$pkgver
+  cd "${srcdir}/${pkgname}-${pkgver}"
   make check
 }
 
-package() {
-  cd $srcdir/$pkgname-$pkgver
-  make DESTDIR=$pkgdir install
+package_cracklib() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/share ${pkgdir}/usr/
+}
+
+package_cracklib-devel() {
+  pkgdesc="cracklib headers and libraries"
+  depends=("cracklib=${pkgver}")
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
 }
