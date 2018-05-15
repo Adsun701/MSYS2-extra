@@ -1,0 +1,47 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=('libnet' 'libnet-devel')
+pkgver=1.1.6
+pkgrel=1
+pkgdesc="A library which provides API for commonly used low-level net functions"
+arch=('i686' 'x86_64')
+license=('BSD')
+url="https://sourceforge.net/projects/libnet-dev/"
+depends=('msys2-runtime' 'bash')
+makedepends=('msys2-runtime-devel' 'bash-devel')
+options=(!libtool)
+source=("https://downloads.sourceforge.net/libnet-dev/${pkgname}-${pkgver}.tar.gz"
+        "libnet-1.1.6-no-undefined.patch")
+sha256sums=('d392bb5825c4b6b672fc93a0268433c86dc964e1500c279dc6d0711ea6ec467a'
+            '542f8960e637dca0ae6f6e5f929ee5589f91283506b9505622ef36cd024dc7f6')
+
+prepare() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/libnet-1.1.6-no-undefined.patch"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --prefix=/usr
+  make
+  make install DESTDIR="${srcdir}/dest"
+}
+
+
+package_libnet() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/share ${pkgdir}/usr/
+}
+
+package_libnet-devel() {
+  pkgdesc="libnet headers and libraries"
+  depends=("libnet=${pkgver}")
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
+}

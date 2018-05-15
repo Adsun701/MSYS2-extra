@@ -9,6 +9,7 @@ license=('GPL')
 url="https://github.com/cracklib/cracklib"
 depends=('msys2-runtime' 'zlib')
 makedepends=('msys2-runtime-devel' 'zlib-devel')
+options=(!libtool)
 source=("https://github.com/cracklib/cracklib/releases/download/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.gz"
         "0001-cracklib-2.9.6-no-undefined.patch")
 sha256sums=('17cf76943de272fd579ed831a1fd85339b393f8d00bf9e0d17c91e972f583343'
