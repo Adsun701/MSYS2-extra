@@ -1,0 +1,40 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=json-c
+pkgver=0.13.1_20180305
+pkgrel=1
+pkgdesc='A JSON implementation in C'
+arch=('i686' 'x86_64')
+license=('MIT')
+url="https://github.com/json-c/json-c"
+depends=('msys2-runtime')
+makedepends=('msys2-runtime-devel')
+options=(!libtool)
+source=("https://github.com/json-c/json-c/archive/${pkgname}-${pkgver//_/-}.tar.gz"
+        "001-install-private-header.patch")
+sha256sums=('5d867baeb7f540abe8f3265ac18ed7a24f91fe3c5f4fd99ac3caba0708511b90'
+            '3c568a03261221de4bca787a1a1321246dc0edc7f58b4c47521dbead78cab2a4')
+noextract=(${pkgname}-${pkgver//_/-}.tar.gz)
+
+prepare() {
+  tar -xzvf ${pkgname}-${pkgver//_/-}.tar.gz -C ${srcdir} || true
+  cd "${srcdir}/${pkgname}-${pkgname}-${pkgver/_/-}"
+  patch -p1 -i ${srcdir}/001-install-private-header.patch
+
+  ./autogen.sh
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgname}-${pkgver/_/-}"
+  ./configure \
+    --prefix=/usr \
+    --enable-shared \
+    --enable-static
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgname}-${pkgver/_/-}"
+  make DESTDIR="$pkgdir" install
+  install -D ${srcdir}/${pkgname}-${pkgname}-${pkgver/_/-}/COPYING ${pkgdir}/usr/share/licenses/${pkgname}/COPYING
+}
