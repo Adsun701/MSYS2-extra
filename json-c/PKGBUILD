@@ -1,6 +1,6 @@
 # Maintainer: Andrew Sun <adsun701@gmail.com>
 
-pkgname=json-c
+pkgname=('json-c' 'json-c-devel')
 pkgver=0.13.1_20180305
 pkgrel=1
 pkgdesc='A JSON implementation in C'
@@ -31,10 +31,22 @@ build() {
     --enable-shared \
     --enable-static
   make
+  make install DESTDIR="${srcdir}/dest"
 }
 
-package() {
+package_json-c() {
   cd "${srcdir}/${pkgname}-${pkgname}-${pkgver/_/-}"
-  make DESTDIR="$pkgdir" install
+  
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
   install -D ${srcdir}/${pkgname}-${pkgname}-${pkgver/_/-}/COPYING ${pkgdir}/usr/share/licenses/${pkgname}/COPYING
+}
+
+package_json-c-devel() {
+  pkgdesc="json-c headers and libraries"
+  depends=("json-c=${pkgver}")
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
 }
