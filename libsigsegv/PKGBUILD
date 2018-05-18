@@ -1,29 +1,48 @@
 # Maintainer: Andrew Sun <adsun701@gmail.com>
 
-pkgname=libsigsegv
-pkgver=2.11
+pkgname=('libsigsegv' 'libsigsegv-devel')
+pkgver=2.12
 pkgrel=1
+pkgdesc='Page fault detection library'
 arch=('i686' 'x86_64')
-pkgdesc="Page fault detection library"
-url="http://www.gnu.org/software/libsigsegv/"
 license=('GPL2')
-depends=('msys2-runtime')
-makedepends=('msys2-runtime-devel')
-source=("http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz")
-sha1sums=('186dea8ae788395476bd7cbaf38c17ebe82e1777')
+url="http://www.gnu.org/software/libsigsegv/"
+depends=('msys2-runtime' 'gcc-libs')
+makedepends=('msys2-runtime-devel' 'gcc')
+options=(!libtool)
+source=("${pkgname}-${pkgver}.tar.gz"::"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+        "0001-libsigsegv-2.11-fix-assembly.patch")
+sha256sums=('3ae1af359eebaa4ffc5896a1aee3568c052c99879316a1ab57f8fe1789c390b6'
+            '73d963f144531fad281ca3f4f374c1e328cc505080ef135e8728f114e5aec371')
 
 prepare() {
-  cd ${srcdir}/${pkgname}-${pkgver}
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/0001-libsigsegv-2.11-fix-assembly.patch"
   autoreconf -fiv
 }
 
 build() {
-  cd ${srcdir}/${pkgname}-${pkgver}
-  ./configure --prefix=/usr --enable-shared --enable-static
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure \
+    --prefix=/usr \
+    --enable-shared \
+    --enable-static
   make
+  make install DESTDIR="${srcdir}/dest"
 }
 
-package() {
-  cd ${srcdir}/${pkgname}-${pkgver}
-  make DESTDIR=${pkgdir} install
+package_libsigsegv() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
+}
+
+package_libsigsegv-devel() {
+  pkgdesc="libsigsegv headers and libraries"
+  depends=("libsigsegv=${pkgver}")
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
 }
