@@ -1,0 +1,46 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=('libilbc' 'libilbc-devel')
+pkgver=2.0.2
+pkgrel=1
+pkgdesc="A friendly copy of the iLBC codec from the WebRTC project"
+arch=('i686' 'x86_64')
+license=('custom')
+url="https://github.com/TimothyGu/libilbc/"
+depends=('msys2-runtime')
+makedepends=('msys2-runtime-devel')
+options=(!libtool)
+source=("${pkgname}-${pkgver}.tar.gz"::"https://github.com/TimothyGu/libilbc/releases/download/v${pkgver}/${pkgname}-${pkgver}.tar.bz2")
+sha256sums=('88e2dc14e1fccd7b7a0d7f84e96ac22a33c3c86820cee4b0a05e3dcc08c2b096')
+
+prepare() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure \
+    --prefix=/usr \
+    --enable-shared \
+    --enable-static
+  make
+  make install DESTDIR="${srcdir}/dest"
+}
+
+package_libilbc() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/share ${pkgdir}/usr/
+}
+
+package_libilbc-devel() {
+  pkgdesc="libilbc headers and libraries"
+  depends=("libilbc=${pkgver}")
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
+}
