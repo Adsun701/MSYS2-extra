@@ -1,0 +1,33 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=dosfstools
+pkgver=4.1
+pkgrel=1
+pkgdesc="DOS filesystem utilities"
+arch=('i686' 'x86_64')
+license=('GPL2')
+url="https://github.com/dosfstools/dosfstools"
+depends=('msys2-runtime'
+         'libiconv')
+makedepends=('msys2-runtime-devel'
+             'libiconv-devel')
+source=("https://github.com/${pkgname}/${pkgname}/releases/download/v${pkgver}/${pkgname}-${pkgver}.tar.xz")
+sha256sums=('e6b2aca70ccc3fe3687365009dd94a2e18e82b688ed4e260e04b7412471cc173')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure \
+    --prefix=/usr \
+    --libexecdir=/usr/lib \
+    --sbindir=/usr/bin \
+    --mandir=/usr/share/man \
+    --docdir=/usr/share/doc/dosfstools \
+    --enable-compat-symlinks \
+    --without-udev
+  LDADD+="-liconv" make
+}
+
+package () {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR=${pkgdir} install
+}
