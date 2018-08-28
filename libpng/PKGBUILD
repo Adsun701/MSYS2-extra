@@ -1,22 +1,23 @@
 # Maintainer: Andrew Sun <adsun701@gmail.com>
 
-pkgname=('libpng')
-pkgver=1.6.34
-_apngver=1.6.34
+pkgname=('libpng' 'libpng-devel')
+pkgver=1.6.35
+_apngver=1.6.35
 pkgrel=1
 pkgdesc="A collection of routines used to create PNG format graphics files"
 arch=('i686' 'x86_64')
 url="http://www.libpng.org/pub/png/libpng.html"
 license=('custom')
-makedepends=('gcc')
-depends=('zlib' 'zlib-devel')
+depends=('zlib')
+makedepends=('gcc' 'zlib-devel')
+options=('!libtool')
 source=("https://downloads.sourceforge.net/sourceforge/${pkgname}/${pkgname}-${pkgver}.tar.xz"
         "https://downloads.sourceforge.net/sourceforge/libpng-apng/libpng-${_apngver}-apng.patch.gz")
-sha256sums=('2f1e960d92ce3b3abd03d06dfec9637dfbd22febf107a536b44f7a47c60659f6'
-            'e661944e54574a3f26927ac9eb7e2788f3a2675545a19735b83fbb9adcb544c1')
+sha256sums=('23912ec8c9584917ed9b09c5023465d71709dce089be503c7867fec68a93bcd7'
+            '18ceb239857bbd32ca706cdad29f1a5dcfb87a5c54258db3bb077cff78c12e04')
 
 prepare() {
-  cd ${pkgname}-${pkgver}
+  cd "${srcdir}/${pkgname}-${pkgver}"
 
   # Add animated PNG (apng) support. Required by Firefox
   # see http://sourceforge.net/projects/libpng-apng/
@@ -25,17 +26,28 @@ prepare() {
 }
 
 build() {
-  cd ${pkgname}-${pkgver}
+  cd "${srcdir}/${pkgname}-${pkgver}"
   ./configure --prefix=/usr --enable-static --enable-shared
   make
-}
-
-package() {
-  cd ${pkgname}-${pkgver}
-  make DESTDIR="${pkgdir}" install
+  make install DESTDIR="${srcdir}/dest"
   
   cd contrib/pngminus
-  make PNGLIB="-L${pkgdir}/usr/lib -lpng" -f makefile.std png2pnm pnm2png
-  install -m755 png2pnm pnm2png "${pkgdir}/usr/bin/"
-  install -D -m644 ../../LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  make PNGLIB="-L${srcdir}/dest/usr/lib -lpng" -f makefile.std png2pnm pnm2png
+  install -m755 png2pnm pnm2png "${srcdir}/dest/usr/bin/"
+  install -D -m644 ../../LICENSE "${srcdir}/dest/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+package_libpng() {
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/share ${pkgdir}/usr/
+}
+
+package_libpng-devel() {
+  pkgdesc="libpng headers and libraries"
+  depends=("libpng=${pkgver}")
+  
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
 }
