@@ -1,0 +1,53 @@
+# Maintainer: Andrew Sun <adsun701@gmail.com>
+
+pkgname=('libfixposix' 'libfixposix-devel')
+pkgver=0.4.3
+pkgrel=1
+pkgdesc="Thin wrapper over POSIX syscalls"
+arch=('i686' 'x86_64')
+license=('BSD')
+url="https://github.com/sionescu/libfixposix"
+depends=('msys2-runtime')
+makedepends=('msys2-runtime-devel' 'gcc')
+options=(!libtool)
+source=("${pkgname}-${pkgver}.tar.gz"::"https://github.com/sionescu/libfixposix/archive/v${pkgver}.tar.gz")
+sha256sums=('78fe8bcebf496520ac29b5b65049f5ec1977c6bd956640bdc6d1da6ea04d8504')
+
+prepare() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure \
+    --prefix=/usr \
+    --enable-shared \
+    --enable-static
+  make
+  make install DESTDIR="${srcdir}/dest"
+  
+  install -Dm644 LICENCE "${srcdir}/dest/usr/share/licenses/${pkgname}/LICENCE"
+}
+
+check() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make check
+}
+
+package_libfixposix() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/bin ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/share ${pkgdir}/usr/
+}
+
+package_libfixposix-devel() {
+  pkgdesc="libfixposix headers and libraries"
+  depends=("libfixposix=${pkgver}")
+
+  mkdir -p ${pkgdir}/usr
+  cp -rf ${srcdir}/dest/usr/include ${pkgdir}/usr/
+  cp -rf ${srcdir}/dest/usr/lib ${pkgdir}/usr/
+}
